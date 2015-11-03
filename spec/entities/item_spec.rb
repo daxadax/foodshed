@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Entities::Item do
+class ItemSpec < FoodshedSpec
   let(:attributes) do
     {
       name: 'apples',
@@ -20,7 +20,6 @@ describe Entities::Item do
     let(:result) { Entitites::Item.create(attributes) }
     it 'builds an item and saves it in the gateway' do
       skip
-      assert_equal 1, ItemGateway.count
       assert_expected_attributes
     end
   end

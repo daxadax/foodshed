@@ -20,7 +20,9 @@ module Gateways
       @backend.all
     end
 
-    def update
+    def update(object)
+      return false unless object[:id]
+      @backend.update(object)
     end
 
     def delete(id)

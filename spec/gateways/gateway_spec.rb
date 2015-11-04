@@ -34,13 +34,18 @@ class GatewaySpec < FoodshedSpec
 
   describe "update" do
     describe "without a persisted object" do
-      it "fails" do
-        assert_failure { gateway.update(object) }
+      it "returns false" do
+        assert_equal gateway.update(object), false
       end
     end
 
     it "updates any changed attributes" do
-      skip
+      persisted = gateway.insert(object)
+      gateway.update(persisted.merge(name: 'a new name'))
+      result = gateway.get(persisted[:id])
+
+      refute_equal persisted, result
+      assert_equal 'a new name', result[:name]
     end
   end
 
@@ -96,6 +101,14 @@ class GatewaySpec < FoodshedSpec
 
     def all
       @memory
+    end
+
+    def update(obj)
+      @memory.detect do |persisted|
+        if persisted[:id] == obj[:id]
+          persisted.update(persisted) { |k,v| persisted[k] = obj[k] }
+        end
+      end
     end
 
     private

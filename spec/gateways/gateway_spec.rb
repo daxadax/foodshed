@@ -1,8 +1,7 @@
 require 'spec_helper'
 
 class GatewaySpec < FoodshedSpec
-  let(:fake_backend)  { FakeBackend.new }
-  let(:gateway)       { Gateways::Gateway.new(fake_backend) }
+  let(:gateway) { Gateways::Gateway.new }
   let(:object) do
     {
       id: nil,
@@ -66,55 +65,19 @@ class GatewaySpec < FoodshedSpec
 
   describe "delete" do
     it "removes the object associated with the given id" do
-      uid = gateway.insert(object)
-      gateway.delete(uid)
+      persisted = gateway.insert(object)
+      gateway.delete(persisted[:id])
 
-      assert_nil gateway.get(uid)
+      assert_nil gateway.get(persisted[:id])
     end
 
     it "doesn't remove other objects" do
-      skip
-      uid = gateway.insert(object)
-      second_uid = gateway.insert()#another one
-      gateway.delete(uid)
+      persisted = gateway.insert(object)
+      persisted_two = gateway.insert(object.merge(name: 'another one'))
+      gateway.delete(persisted[:id])
 
-      assert_nil gateway.get(uid)
-      assert_stored gateway.get(second_uid)
-    end
-  end
-
-  class FakeBackend
-    def initialize
-      @memory = []
-      @id = 0
-    end
-
-    def add(object)
-      added_object = object.merge(id: next_id)
-      @memory << added_object
-      added_object[:id]
-    end
-
-    def get(id)
-      @memory.detect { |obj| obj[:id] == id }
-    end
-
-    def all
-      @memory
-    end
-
-    def update(obj)
-      @memory.detect do |persisted|
-        if persisted[:id] == obj[:id]
-          persisted.update(persisted) { |k,v| persisted[k] = obj[k] }
-        end
-      end
-    end
-
-    private
-
-    def next_id
-      @id += 1
+      assert_nil gateway.get(persisted[:id])
+      assert_equal 'another one', gateway.get(persisted_two[:id])[:name]
     end
   end
 end

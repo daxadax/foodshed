@@ -17,16 +17,16 @@ class ItemSpec < FoodshedSpec
   end
 
   describe 'create' do
-    let(:result) { Entitites::Item.create(attributes) }
+    let(:result) { Entities::Item.create(attributes) }
     it 'builds an item and saves it in the gateway' do
-      skip
-      assert_expected_attributes
+      assert_expected_attributes(id: 1)
     end
   end
 
-  def assert_expected_attributes
+  def assert_expected_attributes(id: nil)
     assert_nil result.size
     assert_nil result.notes
+    assert_equal id, result.id
     assert_equal 'apples', result.name
     assert_equal 'fruit', result.type
     assert_equal 5, result.quantity

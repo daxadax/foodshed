@@ -2,8 +2,8 @@ module Gateways
   class Gateway
     InsertionError = Class.new(ArgumentError)
 
-    def initialize(backend)
-      @backend = backend
+    def initialize
+      @backend = Config.database_backend
     end
 
     def insert(object)
@@ -26,6 +26,7 @@ module Gateways
     end
 
     def delete(id)
+      @backend.delete(id)
     end
   end
 end
